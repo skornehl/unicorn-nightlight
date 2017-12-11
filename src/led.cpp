@@ -60,7 +60,7 @@ void setLedOff(int num_leds, CRGB leds[]){
 // Fading
 void fadeall(int num_leds, CRGB leds[]) {
 	for(int i = 0; i < num_leds; i++) {
-		leds[i].nscale8(250);
+		leds[i].nscale8(190);
 	}
 }
 
@@ -102,6 +102,14 @@ void increaseBlue(int num_leds, CRGB leds[], int modifier){
 void increaseGreen(int num_leds, CRGB leds[], int modifier){
   lastCRGB.green = lastCRGB.green + modifier;
   setLedColour(num_leds, leds, lastCRGB);
+}
+
+void setStaticRainbow(int num_leds, CRGB leds[]){
+  fill_rainbow(leds, num_leds, 0, 30);
+}
+
+void setRainbow(int num_leds, CRGB leds[], int hue){
+  fill_rainbow(leds, num_leds, hue, 30);
 }
 
 // Cerrylon effect

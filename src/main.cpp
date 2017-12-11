@@ -32,17 +32,15 @@ void matchRemote(uint64_t code){
 
   switch (code) {
 		// Reihe 1
-    case (uint64_t) 1: 						// Increase Brigthness
+    case (uint64_t) 16726725: 						// Increase Brigthness
       decreaseBrightness();
-      code = lastCode;
      break;
-    case (uint64_t) 2: 						// Decrease Brigthness
+    case (uint64_t) 16759365: 						// Decrease Brigthness
       increaseBrightness();
-      code = lastCode;
       break;
-		case (uint64_t) 3: 						// Pause
+		case (uint64_t) 16745085: 						// Pause
 			break;
-		case (uint64_t) 4: 						// Off
+		case (uint64_t) 16712445: 						// Off
 			setLedOff(NUM_LEDS, leds);
 			break;
 
@@ -120,24 +118,16 @@ void matchRemote(uint64_t code){
 		case (uint64_t) 16722135: 						// Red-Up
 			increaseRed(NUM_LEDS, leds, 5);
 			break;
-		case (uint64_t) 16754775: 					// Gren-Up
+		case (uint64_t) 16754775: 					// Green-Up
 			increaseBlue(NUM_LEDS, leds, 5);
 			break;
 		case (uint64_t) 16738455: 					// Blue-Up
 			increaseGreen(NUM_LEDS, leds, 5);
 			break;
 		case (uint64_t) 16771095: 					// Quick
-			setLedColour(NUM_LEDS, leds, CRGB::MediumAquamarine);
+			setCerrylon(NUM_LEDS, leds);
 			break;
-    // case (uint64_t) 3:
-    // 	setCerrylon(NUM_LEDS, leds);
-    //   break;
-    // case (uint64_t) 4:
-    //   setLedColour(NUM_LEDS, leds, CRGB::DarkMagenta);
-    //   break;
-    // case (uint64_t) 0:
-    //   setLedColour(NUM_LEDS, leds, CRGB::DarkMagenta);
-    //   break;
+
   }
   if (code > 0 and code != 7 and code != 21) {
     lastCode = code;
@@ -145,11 +135,6 @@ void matchRemote(uint64_t code){
 }
 
 void loop() {
-
-	// EVERY_N_MILLISECONDS( 40 ) {
-	// 	//cycle hue for rainbow
-	// 	config.hue++;
-	// }
 	if (isNight()) {
 		matchRemote(getIrCode());
 	} else {
