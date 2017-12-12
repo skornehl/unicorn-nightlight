@@ -14,6 +14,8 @@ bool overwritten = false;
 
 struct CRGB lastCRGB = CRGB::DarkMagenta;
 
+uint8_t rainbowHue = 0;
+
 ///////////////
 // BRIGTHNESS functions
 ///////////////
@@ -104,16 +106,21 @@ void increaseGreen(int num_leds, CRGB leds[], int modifier){
   setLedColour(num_leds, leds, lastCRGB);
 }
 
-void setStaticRainbow(int num_leds, CRGB leds[]){
-  fill_rainbow(leds, num_leds, 0, 30);
+void setStaticRainbow(int num_leds, CRGB leds[], uint8_t start, uint8_t end){
+  fill_rainbow(leds, num_leds, start, end);
 }
 
-void setRainbow(int num_leds, CRGB leds[], int hue){
-  fill_rainbow(leds, num_leds, hue, 30);
+void setRainbow(int num_leds, CRGB leds[], uint8_t hue){
+  fill_rainbow(leds, num_leds, hue, 5);
 }
+
+void setPinkGradient(int num_leds, CRGB leds[]){
+  fill_gradient_RGB(leds, num_leds, CRGB::Red, CRGB::DarkMagenta);
+}
+
 
 // Cerrylon effect
-void setCerrylon(int num_leds, CRGB leds[]) {
+void setCerrylon(int num_leds, CRGB leds[], int delayMS) {
 	static uint8_t hue = 0;
 	// First slide the led in one direction
 	for(int i = 0; i < num_leds; i++) {
@@ -122,7 +129,7 @@ void setCerrylon(int num_leds, CRGB leds[]) {
 		FastLED.show();
 		fadeall(num_leds, leds);
 		// Wait a little bit before we loop around and do it again
-		delay(30);
+		delay(delayMS);
 	}
 
 	// Now go in the other direction.
@@ -133,6 +140,27 @@ void setCerrylon(int num_leds, CRGB leds[]) {
 		FastLED.show();
 		fadeall(num_leds, leds);
 		// Wait a little bit before we loop around and do it again
-		delay(30);
+		delay(delayMS);
 	}
+}
+
+void moveEffect(int num_leds, CRGB leds[], int movingEffect){
+  switch (movingEffect) {
+
+    case 1:   // Quick
+      setCerrylon(num_leds, leds, 40);
+      break;
+    case 2:   // Slow
+      setCerrylon(num_leds, leds, 60);
+      break;
+    case 3:   // DIY2
+      setRainbow(num_leds, leds, rainbowHue++);
+      break;
+    case 4:   // Slow
+      setCerrylon(num_leds, leds, 60);
+      break;
+    case 5:   // Slow
+      setCerrylon(num_leds, leds, 60);
+      break;
+  }
 }

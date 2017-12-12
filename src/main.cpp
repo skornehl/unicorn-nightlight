@@ -11,12 +11,12 @@
 #include <led.h>
 #include <ir.h>
 
-uint64_t lastCode = 1;
-
 #define DATA_PIN 3
 #define CLOCK_PIN 2
 
 #define NUM_LEDS 8
+
+int movingEffect = 0;
 
 // Define the array of leds
 CRGB leds[NUM_LEDS];
@@ -42,101 +42,155 @@ void matchRemote(uint64_t code){
 			break;
 		case (uint64_t) 16712445: 						// Off
 			setLedOff(NUM_LEDS, leds);
+			movingEffect = 0;
 			break;
 
 		// Reihe 2
 		case (uint64_t) 16718565: 						// Red
 			setLedColour(NUM_LEDS, leds, CRGB::Red);
+			movingEffect = 0;
 			break;
 		case (uint64_t) 16751205: 						// Green
 			setLedColour(NUM_LEDS, leds, CRGB::Green);
+			movingEffect = 0;
 			break;
 		case (uint64_t) 16753245: 						// Blue
 			setLedColour(NUM_LEDS, leds, CRGB::Blue);
+			movingEffect = 0;
 			break;
 		case (uint64_t) 16720605: 						// White
 			setLedColour(NUM_LEDS, leds, CRGB::White);
+			movingEffect = 0;
 			break;
 
 		// Reihe 3
 		case (uint64_t) 16722645: 						// OrangeRed
 			setLedColour(NUM_LEDS, leds, CRGB::OrangeRed);
+			movingEffect = 0;
 			break;
 		case (uint64_t) 16755285: 					// DarkOliveGreen
 			setLedColour(NUM_LEDS, leds, CRGB::DarkOliveGreen);
+			movingEffect = 0;
 			break;
 		case (uint64_t) 16749165: 					// DarkBlue
 			setLedColour(NUM_LEDS, leds, CRGB::DarkBlue);
+			movingEffect = 0;
 			break;
 		case (uint64_t) 16716525: 					// LightPink
 			setLedColour(NUM_LEDS, leds, CRGB::LightPink);
+			movingEffect = 0;
 			break;
 
 		// Reihe 4
 		case (uint64_t) 16714485: 						// Orange
 			setLedColour(NUM_LEDS, leds, CRGB::Orange);
+			movingEffect = 0;
 			break;
 		case (uint64_t) 16747125: 					// LightSkyBlue
 			setLedColour(NUM_LEDS, leds, CRGB::LightSkyBlue);
+			movingEffect = 0;
 			break;
 		case (uint64_t) 16757325: 					// Purple
 			setLedColour(NUM_LEDS, leds, CRGB::Purple);
+			movingEffect = 0;
 			break;
 		case (uint64_t) 16724685: 					// HotPink
 			setLedColour(NUM_LEDS, leds, CRGB::HotPink);
+			movingEffect = 0;
 			break;
 
 		// Reihe 5
 		case (uint64_t) 16726215: 						// DarkOrange
 			setLedColour(NUM_LEDS, leds, CRGB::DarkOrange);
+			movingEffect = 0;
 			break;
 		case (uint64_t) 16758855: 					// RoyalBlue
 			setLedColour(NUM_LEDS, leds, CRGB::RoyalBlue);
+			movingEffect = 0;
 			break;
 		case (uint64_t) 16742535: 					// DarkMagenta
 			setLedColour(NUM_LEDS, leds, CRGB::DarkMagenta);
+			movingEffect = 0;
 			break;
 		case (uint64_t) 16775175: 					// Cyan
 			setLedColour(NUM_LEDS, leds, CRGB::Cyan);
+			movingEffect = 0;
 			break;
 
 		// Reihe 6
 		case (uint64_t) 16718055: 						// Yellow
 			setLedColour(NUM_LEDS, leds, CRGB::Yellow);
+			movingEffect = 0;
 			break;
 		case (uint64_t) 16750695: 					// MediumBlue
 			setLedColour(NUM_LEDS, leds, CRGB::MediumBlue);
+			movingEffect = 0;
 			break;
 		case (uint64_t) 16734375: 					// DarkOrchid
 			setLedColour(NUM_LEDS, leds, CRGB::DarkOrchid);
+			movingEffect = 0;
 			break;
 		case (uint64_t) 16767015: 					// MediumAquamarine
 			setLedColour(NUM_LEDS, leds, CRGB::MediumAquamarine);
+			movingEffect = 0;
 			break;
 
 		// Reihe 7
 		case (uint64_t) 16722135: 						// Red-Up
 			increaseRed(NUM_LEDS, leds, 5);
+			movingEffect = 0;
 			break;
 		case (uint64_t) 16754775: 					// Green-Up
 			increaseBlue(NUM_LEDS, leds, 5);
+			movingEffect = 0;
 			break;
 		case (uint64_t) 16738455: 					// Blue-Up
 			increaseGreen(NUM_LEDS, leds, 5);
+			movingEffect = 0;
 			break;
 		case (uint64_t) 16771095: 					// Quick
-			setCerrylon(NUM_LEDS, leds);
+			movingEffect = 1;
 			break;
 
-  }
-  if (code > 0 and code != 7 and code != 21) {
-    lastCode = code;
+		// Reihe 8
+		case (uint64_t) 16713975: 						// Red-down
+			increaseRed(NUM_LEDS, leds, 5);
+			movingEffect = 0;
+			break;
+		case (uint64_t) 16746615: 					// Green-down
+			increaseBlue(NUM_LEDS, leds, 5);
+			movingEffect = 0;
+			break;
+		case (uint64_t) 16730295: 					// Blue-down
+			increaseGreen(NUM_LEDS, leds, 5);
+			movingEffect = 0;
+			break;
+		case (uint64_t) 16762935: 					// Slow
+			movingEffect = 2;
+			break;
+
+		// Reihe 6
+		case (uint64_t) 16724175: 						// DIY1
+			setStaticRainbow(NUM_LEDS, leds, 0, 30);
+			movingEffect = 0;
+			break;
+		case (uint64_t) 16756815: 					// DIY2
+			movingEffect = 3;
+			break;
+		case (uint64_t) 16740495: 					// DIY3
+			setPinkGradient(NUM_LEDS, leds);
+			movingEffect = 0;
+			break;
+		case (uint64_t) 16773135: 					// AUTO
+			movingEffect = random(1, 4);
+			break;
   }
 }
 
 void loop() {
 	if (isNight()) {
 		matchRemote(getIrCode());
+		moveEffect(NUM_LEDS, leds, movingEffect);
 	} else {
 		setLedOff(NUM_LEDS, leds);
 	}
