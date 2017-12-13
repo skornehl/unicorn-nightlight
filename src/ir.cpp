@@ -26,10 +26,7 @@ uint64_t getIrCode() {
     irrecv.resume();
     if (results.value > 99999999){
       results.value = lastResult;
-    } else if (lastResult == 0) { // first start
-      results.value = 16742535;
     }
-
     lastResult = results.value;
     return (results.value);
   }

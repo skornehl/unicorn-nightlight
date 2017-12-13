@@ -144,6 +144,29 @@ void setCerrylon(int num_leds, CRGB leds[], int delayMS) {
 	}
 }
 
+// Copied from https://github.com/atuline/FastLED-Demos
+void rainbow_beat(int num_leds, CRGB leds[]) {
+  uint8_t beatA = beatsin8(17, 0, 255);                        // Starting hue
+  uint8_t beatB = beatsin8(13, 0, 255);
+  fill_rainbow(leds, num_leds, (beatA+beatB)/2, 8);            // Use FastLED's fill_rainbow routine.
+}
+
+// Copied from https://github.com/atuline/FastLED-Demos
+void dot_beat(int num_leds, CRGB leds[]) {
+  int8_t fadeval = 224;
+  uint8_t bpm = 30;
+  uint8_t inner = beatsin8(bpm, num_leds/4, num_leds/4*3);    // Move 1/4 to 3/4
+  uint8_t outer = beatsin8(bpm, 0, num_leds-1);               // Move entire length
+  uint8_t middle = beatsin8(bpm, num_leds/3, num_leds/3*2);   // Move 1/3 to 2/3
+
+  leds[middle] = CRGB::Purple;
+  leds[inner] = CRGB::DarkMagenta;
+  leds[outer] = CRGB::Aqua;
+
+  nscale8(leds, num_leds, fadeval);                             // Fade the entire array. Or for just a few LED's, use  nscale8(&leds[2], 5, fadeval);
+
+}
+
 void moveEffect(int num_leds, CRGB leds[], int movingEffect){
   switch (movingEffect) {
 
@@ -156,11 +179,16 @@ void moveEffect(int num_leds, CRGB leds[], int movingEffect){
     case 3:   // DIY2
       setRainbow(num_leds, leds, rainbowHue++);
       break;
-    case 4:   // Slow
-      setCerrylon(num_leds, leds, 60);
+    case 4:   // DIY4
+      rainbow_beat(num_leds, leds);
       break;
-    case 5:   // Slow
+    case 5:   // DIY5
+      dot_beat(num_leds, leds);
+      break;
+    case 6:   // DIY6
       setCerrylon(num_leds, leds, 60);
       break;
   }
+
+
 }

@@ -1,8 +1,6 @@
 #include <Arduino.h>
 #include <FastLED.h>
 
-extern bool isActive;
-
 void setLedColour(int num_leds, CRGB leds[], CRGB colour);
 void setBrightness(int brightness);
 void increaseBrightness();

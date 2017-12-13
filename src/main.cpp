@@ -17,6 +17,7 @@
 #define NUM_LEDS 8
 
 int movingEffect = 0;
+int movingEffectPlayPause = 0;
 
 // Define the array of leds
 CRGB leds[NUM_LEDS];
@@ -24,8 +25,11 @@ CRGB leds[NUM_LEDS];
 void setup() {
 	Serial.begin(115200);
 	LEDS.addLeds<WS2801, DATA_PIN, CLOCK_PIN, RBG>(leds,NUM_LEDS);
-	LEDS.setBrightness(84);
+	set_max_power_in_volts_and_milliamps(5, 500);               // FastLED Power management set at 5V, 500mA
 	irSetup();
+
+	// Initial colour
+	setLedColour(NUM_LEDS, leds, CRGB::DarkMagenta);
 }
 
 void matchRemote(uint64_t code){
@@ -39,6 +43,12 @@ void matchRemote(uint64_t code){
       increaseBrightness();
       break;
 		case (uint64_t) 16745085: 						// Pause
+			if(movingEffect == 0){
+				movingEffect = movingEffectPlayPause;
+			} else {
+				movingEffectPlayPause = movingEffect;
+				movingEffect = 0;
+			}
 			break;
 		case (uint64_t) 16712445: 						// Off
 			setLedOff(NUM_LEDS, leds);
@@ -170,7 +180,7 @@ void matchRemote(uint64_t code){
 			break;
 
 		// Reihe 6
-		case (uint64_t) 16724175: 						// DIY1
+		case (uint64_t) 16724175: 					// DIY1
 			setStaticRainbow(NUM_LEDS, leds, 0, 30);
 			movingEffect = 0;
 			break;
@@ -182,9 +192,23 @@ void matchRemote(uint64_t code){
 			movingEffect = 0;
 			break;
 		case (uint64_t) 16773135: 					// AUTO
+			movingEffect = random(1, 6);
+			break;
+
+		// Reihe 7
+		case (uint64_t) 16716015: 					// DIY4
+			movingEffect = 4;
+			break;
+		case (uint64_t) 16748655: 					// DIY5
+			movingEffect = 5;
+			break;
+		case (uint64_t) 16732335: 					// DIY6
+			movingEffect = 6;
+			break;
+		case (uint64_t) 16764975: 					// FLASH
 			movingEffect = random(1, 4);
 			break;
-  }
+		}
 }
 
 void loop() {
