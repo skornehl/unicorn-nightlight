@@ -167,6 +167,46 @@ void dot_beat(int num_leds, CRGB leds[]) {
 
 }
 
+void flash(int num_leds, CRGB leds[]) {
+  // Turn the LED on, then pause
+  setLedColour(num_leds, leds, CRGB::DarkMagenta);
+  delay(500);
+  // Now turn the LED off, then pause
+  setLedOff(num_leds, leds);
+  delay(500);
+}
+
+// Copied from https://github.com/atuline/FastLED-Demos
+void mover(int num_leds, CRGB leds[]) {
+  int thisfade = 190;
+  int thisdelay = 100;
+  uint8_t secondHand = (millis() / 1000) % 15;
+  static uint8_t lastSecond = 99;
+  if (lastSecond != secondHand) {
+    lastSecond = secondHand;
+    switch(secondHand) {
+      case  0: thisdelay=20; thisfade=240; break;
+      case  5: thisdelay=50; thisfade=128; break;
+      case 10: thisdelay=100; thisfade=64; break;
+      case 15: break;
+    }
+  }
+  static uint8_t hue = 0;
+  for (int i = 0; i < num_leds; i++) {
+    leds[i] += CHSV(hue, 255, 255);
+    leds[(i+5) % num_leds] += CHSV(hue+85, 255, 255);
+    leds[(i+10) % num_leds] += CHSV(hue+170, 255, 255);
+    show_at_max_brightness_for_power();
+    fadeToBlackBy(leds, num_leds, thisfade);
+    delay(thisdelay);
+  }
+}
+
+void fade(int num_leds, CRGB leds[], int hue) {
+  fill_solid(leds, num_leds, CHSV(rainbowHue+hue, 255, 255));
+  FastLED.show();
+}
+
 void moveEffect(int num_leds, CRGB leds[], int movingEffect){
   switch (movingEffect) {
 
@@ -186,7 +226,22 @@ void moveEffect(int num_leds, CRGB leds[], int movingEffect){
       dot_beat(num_leds, leds);
       break;
     case 6:   // DIY6
-      setCerrylon(num_leds, leds, 60);
+      mover(num_leds, leds);
+      break;
+    case 7:   // FLASH
+      flash(num_leds, leds);
+      break;
+    case 8:   // JUMP3
+      flash(num_leds, leds);
+      break;
+    case 9:   // JUMP7
+      flash(num_leds, leds);
+      break;
+    case 10:   // FADE3
+      fade(num_leds, leds, 3);
+      break;
+    case 11:   // FADE7
+      fade(num_leds, leds, 7);
       break;
   }
 

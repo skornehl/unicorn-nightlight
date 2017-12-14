@@ -192,7 +192,7 @@ void matchRemote(uint64_t code){
 			movingEffect = 0;
 			break;
 		case (uint64_t) 16773135: 					// AUTO
-			movingEffect = random(1, 6);
+			movingEffect = random(1, 7);
 			break;
 
 		// Reihe 7
@@ -206,7 +206,21 @@ void matchRemote(uint64_t code){
 			movingEffect = 6;
 			break;
 		case (uint64_t) 16764975: 					// FLASH
-			movingEffect = random(1, 4);
+			movingEffect = 7;
+			break;
+
+		// Reihe 8
+		case (uint64_t) 16720095: 					// JUMP3
+			movingEffect = 8;
+			break;
+		case (uint64_t) 16752735: 					// JUMP7
+			movingEffect = 9;
+			break;
+		case (uint64_t) 16736415: 					// FADE3
+			movingEffect = 10;
+			break;
+		case (uint64_t) 16769055: 					// FADE3
+			movingEffect = 11;
 			break;
 		}
 }
