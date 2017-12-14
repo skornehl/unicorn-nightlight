@@ -203,7 +203,8 @@ void mover(int num_leds, CRGB leds[]) {
 }
 
 void fade(int num_leds, CRGB leds[], int hue) {
-  fill_solid(leds, num_leds, CHSV(rainbowHue+hue, 255, 255));
+  rainbowHue = rainbowHue + hue;
+  fill_solid(leds, num_leds, CHSV(rainbowHue, 255, 255));
   FastLED.show();
 }
 
