@@ -31,11 +31,13 @@ void setBrightness(int _brightness) {
 
 // Increases brightness by 10
 void increaseBrightness() {
+  overwritten = true;
   setBrightness(brightness + 10);
 }
 
 // Decreases brightness by 10
 void decreaseBrightness() {
+  overwritten = true;
   setBrightness(brightness - 10);
 }
 
@@ -75,16 +77,20 @@ bool isNight() {
   if (light < (DAY_TRESHOLD + 20) && light > (DAY_TRESHOLD - 20) || light < (NIGHT_TRESHOLD + 20) && light > (NIGHT_TRESHOLD - 20)) {
 		return isActive;
   } else {
-    if (light < NIGHT_TRESHOLD) {
-      // Serial.println("NIGHT");
+    if (light < NIGHT_TRESHOLD && !overwritten) {
+      //Serial.println("NIGHT");
       setBrightness(NIGHT_BRIGTHNESS);
-    } else {
-      // Serial.println("DAY");
+    } else if (!overwritten) {
+      //Serial.println("DAY");
       setBrightness(MAX_BRIGTHNESS);
     }
 		isActive = light < DAY_TRESHOLD;
     return isActive;
   }
+}
+
+void setAutoMode(bool autoMode){
+  overwritten = !autoMode;
 }
 
 ///////////////
@@ -208,6 +214,17 @@ void fade(int num_leds, CRGB leds[], int hue) {
   FastLED.show();
 }
 
+// copied from https://github.com/Simplify/arduino-led-strip/blob/master/arduino-led-strip.ino
+void snowSparkle(int num_leds, CRGB leds[], int delayMS ) {
+  memset(leds, 0x10, num_leds * 3);
+  int led = random(num_leds);
+  leds[led] = CRGB::White;
+  FastLED.show();
+  leds[led] = 0x101010;
+  FastLED.show();
+  delay(delayMS);
+}
+
 void moveEffect(int num_leds, CRGB leds[], int movingEffect){
   switch (movingEffect) {
 
@@ -233,10 +250,10 @@ void moveEffect(int num_leds, CRGB leds[], int movingEffect){
       flash(num_leds, leds);
       break;
     case 8:   // JUMP3
-      flash(num_leds, leds);
+      snowSparkle(num_leds, leds, 30);
       break;
     case 9:   // JUMP7
-      flash(num_leds, leds);
+      snowSparkle(num_leds, leds, 70);
       break;
     case 10:   // FADE3
       fade(num_leds, leds, 3);

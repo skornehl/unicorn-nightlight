@@ -14,6 +14,7 @@ void irSetup() {
   irrecv.enableIRIn();  // Start the receiver
 }
 
+// Special output function with breakline at the end
 void serialPrintUint64ln(uint64_t _value){
   serialPrintUint64(_value);
   Serial.println("");

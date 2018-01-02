@@ -2,10 +2,6 @@
 
 #include <Arduino.h>
 #include <FastLED.h>
-// #include <IRremoteESP8266.h>
-// #include <IRrecv.h>
-// #include <IRutils.h>
-#include <limits.h>
 
 // Own classes
 #include <led.h>
@@ -25,7 +21,7 @@ CRGB leds[NUM_LEDS];
 void setup() {
 	Serial.begin(115200);
 	LEDS.addLeds<WS2801, DATA_PIN, CLOCK_PIN, RBG>(leds,NUM_LEDS);
-	set_max_power_in_volts_and_milliamps(5, 500);               // FastLED Power management set at 5V, 500mA
+	set_max_power_in_volts_and_milliamps(3, 500);               // FastLED Power management set at 5V, 500mA
 	irSetup();
 
 	// Initial colour
@@ -192,7 +188,9 @@ void matchRemote(uint64_t code){
 			movingEffect = 0;
 			break;
 		case (uint64_t) 16773135: 					// AUTO
-			movingEffect = random(1, 7);
+			setAutoMode(true);
+			setLedColour(NUM_LEDS, leds, CRGB::DarkMagenta);
+			movingEffect = 0;
 			break;
 
 		// Reihe 7
