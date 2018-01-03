@@ -23,6 +23,7 @@ uint8_t rainbowHue = 0;
 // Det Brigthness to value between min and max Brigthness
 void setBrightness(int _brightness) {
   if (_brightness >= NIGHT_BRIGTHNESS and _brightness <= MAX_BRIGTHNESS) {
+    //Serial.println(_brightness);
     brightness = _brightness;
     FastLED.setBrightness( brightness );
     FastLED.show();
@@ -73,14 +74,15 @@ bool isNight() {
   int light = analogRead(0);
 	// Serial.println(light);
 
-
-  if (light < (DAY_TRESHOLD + 20) && light > (DAY_TRESHOLD - 20) || light < (NIGHT_TRESHOLD + 20) && light > (NIGHT_TRESHOLD - 20)) {
+  if (overwritten) {
+    return true;
+  } else if (light < (DAY_TRESHOLD + 20) && light > (DAY_TRESHOLD - 20) || light < (NIGHT_TRESHOLD + 20) && light > (NIGHT_TRESHOLD - 20)) {
 		return isActive;
-  } else {
-    if (light < NIGHT_TRESHOLD && !overwritten) {
+  }  else {
+    if (light < NIGHT_TRESHOLD) {
       //Serial.println("NIGHT");
       setBrightness(NIGHT_BRIGTHNESS);
-    } else if (!overwritten) {
+    } else {
       //Serial.println("DAY");
       setBrightness(MAX_BRIGTHNESS);
     }

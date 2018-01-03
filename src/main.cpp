@@ -21,7 +21,7 @@ CRGB leds[NUM_LEDS];
 void setup() {
 	Serial.begin(115200);
 	LEDS.addLeds<WS2801, DATA_PIN, CLOCK_PIN, RBG>(leds,NUM_LEDS);
-	set_max_power_in_volts_and_milliamps(3, 500);               // FastLED Power management set at 5V, 500mA
+	set_max_power_in_volts_and_milliamps(3, 500);
 	irSetup();
 
 	// Initial colour
@@ -33,10 +33,10 @@ void matchRemote(uint64_t code){
   switch (code) {
 		// Reihe 1
     case (uint64_t) 16726725: 						// Increase Brigthness
-      decreaseBrightness();
+      increaseBrightness();
      break;
     case (uint64_t) 16759365: 						// Decrease Brigthness
-      increaseBrightness();
+			decreaseBrightness();
       break;
 		case (uint64_t) 16745085: 						// Pause
 			if(movingEffect == 0){
