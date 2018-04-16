@@ -8,9 +8,8 @@
 #include <ir.h>
 
 #define DATA_PIN 3
-#define CLOCK_PIN 2
 
-#define NUM_LEDS 8
+#define NUM_LEDS 15
 
 int movingEffect = 0;
 int movingEffectPlayPause = 0;
@@ -20,21 +19,27 @@ CRGB leds[NUM_LEDS];
 
 void setup() {
 	Serial.begin(115200);
-	LEDS.addLeds<WS2801, DATA_PIN, CLOCK_PIN, RBG>(leds,NUM_LEDS);
+	LEDS.addLeds<WS2812, DATA_PIN, GRB>(leds,NUM_LEDS);
+
 	set_max_power_in_volts_and_milliamps(3, 500);
 	irSetup();
 
 	// Initial colour
-	setLedColour(NUM_LEDS, leds, CRGB::DarkMagenta);
+	//setLedColour(NUM_LEDS, leds, CRGB::DarkMagenta);
+	movingEffect = 12;
 }
 
 void matchRemote(uint64_t code){
 
   switch (code) {
+		case (uint64_t) 0: 						// Increase Brigthness
+      setLastLedColour(NUM_LEDS, leds);
+      break;
+
 		// Reihe 1
     case (uint64_t) 16726725: 						// Increase Brigthness
       increaseBrightness();
-     break;
+      break;
     case (uint64_t) 16759365: 						// Decrease Brigthness
 			decreaseBrightness();
       break;
@@ -177,20 +182,17 @@ void matchRemote(uint64_t code){
 
 		// Reihe 6
 		case (uint64_t) 16724175: 					// DIY1
-			setStaticRainbow(NUM_LEDS, leds, 0, 30);
-			movingEffect = 0;
+			movingEffect = 12;
 			break;
 		case (uint64_t) 16756815: 					// DIY2
 			movingEffect = 3;
 			break;
 		case (uint64_t) 16740495: 					// DIY3
-			setPinkGradient(NUM_LEDS, leds);
-			movingEffect = 0;
+			movingEffect = 13;
 			break;
 		case (uint64_t) 16773135: 					// AUTO
 			setAutoMode(true);
-			setLedColour(NUM_LEDS, leds, CRGB::DarkMagenta);
-			movingEffect = 0;
+			movingEffect = 12;
 			break;
 
 		// Reihe 7
@@ -225,10 +227,17 @@ void matchRemote(uint64_t code){
 
 void loop() {
 	if (isNight()) {
-		matchRemote(getIrCode());
-		moveEffect(NUM_LEDS, leds, movingEffect);
+		int irCode = getIrCode();
+			matchRemote(irCode);
+		// if (movingEffect == 0){
+		//
+		// }
+		if (movingEffect > 0){
+			moveEffect(NUM_LEDS, leds, movingEffect);
+		}
 	} else {
 		setLedOff(NUM_LEDS, leds);
 	}
+	FastLED.show();
 	FastLED.delay(1000/30);
 }

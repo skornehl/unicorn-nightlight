@@ -1,18 +1,22 @@
 #include <Arduino.h>
 #include <FastLED.h>
 
+#define qsuba(x, b)  ((x>b)?x-b:0)
+CRGBPalette16 currentPalette;
+TBlendType currentBlending = LINEARBLEND;
+
 // variables
 const int MAX_BRIGTHNESS = 240;
 const int NIGHT_BRIGTHNESS = 20;
 
-const int DAY_TRESHOLD = 350;
-const int NIGHT_TRESHOLD = 60;
+const int DAY_TRESHOLD = 250;
+const int NIGHT_TRESHOLD = 30;
 
 int brightness = MAX_BRIGTHNESS;
 bool isActive = false;
 bool overwritten = false;
 
-struct CRGB lastCRGB = CRGB::DarkMagenta;
+struct CRGB lastCRGB = CRGB::Black;
 
 uint8_t rainbowHue = 0;
 
@@ -53,9 +57,14 @@ void setLedColour(int num_leds, CRGB leds[], CRGB colour){
   FastLED.show();
 }
 
+void setLastLedColour(int num_leds, CRGB leds[]){
+  setLedColour(num_leds, leds, lastCRGB);
+}
+
 // Set solid colour BLACK
 void setLedOff(int num_leds, CRGB leds[]){
-  setLedColour(num_leds, leds, CRGB::Black);
+  fill_solid(leds, num_leds, CRGB::Black);
+  FastLED.show();
 }
 
 ///////////////
@@ -72,7 +81,7 @@ void fadeall(int num_leds, CRGB leds[]) {
 // Decides if dark enough to aut enable light
 bool isNight() {
   int light = analogRead(0);
-	// Serial.println(light);
+	//Serial.println(light);
 
   if (overwritten) {
     return true;
@@ -162,12 +171,12 @@ void rainbow_beat(int num_leds, CRGB leds[]) {
 // Copied from https://github.com/atuline/FastLED-Demos
 void dot_beat(int num_leds, CRGB leds[]) {
   int8_t fadeval = 224;
-  uint8_t bpm = 30;
+  uint8_t bpm = 15;
   uint8_t inner = beatsin8(bpm, num_leds/4, num_leds/4*3);    // Move 1/4 to 3/4
   uint8_t outer = beatsin8(bpm, 0, num_leds-1);               // Move entire length
   uint8_t middle = beatsin8(bpm, num_leds/3, num_leds/3*2);   // Move 1/3 to 2/3
 
-  leds[middle] = CRGB::Purple;
+  leds[middle] = CRGB::Red;
   leds[inner] = CRGB::DarkMagenta;
   leds[outer] = CRGB::Aqua;
 
@@ -217,19 +226,69 @@ void fade(int num_leds, CRGB leds[], int hue) {
 }
 
 // copied from https://github.com/Simplify/arduino-led-strip/blob/master/arduino-led-strip.ino
-void snowSparkle(int num_leds, CRGB leds[], int delayMS ) {
-  memset(leds, 0x10, num_leds * 3);
-  int led = random(num_leds);
-  leds[led] = CRGB::White;
-  FastLED.show();
-  leds[led] = 0x101010;
-  FastLED.show();
-  delay(delayMS);
+void twinkle(int num_leds, CRGB leds[], int max_leds, boolean random_color) {
+  int amount = 1;
+  int temp_leds[max_leds];
+  memset(leds, 0, num_leds * 3);
+  memset(temp_leds, 0, max_leds * 2);
+  for (int i = 0; i < max_leds; i++) {
+    leds[temp_leds[i]] = CRGB::Black;
+    int random_led = random(num_leds);
+    temp_leds[i] = random_led;
+    if (random_color) {
+      leds[random_led] = CHSV(random(0, 255), random(200, 255), random(0, 255)); // I prefer high saturation
+    } else {
+      leds[random_led] = CRGB::Red;
+    }
+    FastLED.show();
+    delay(110);
+  }
 }
 
-void moveEffect(int num_leds, CRGB leds[], int movingEffect){
-  switch (movingEffect) {
+// copied from https://github.com/Simplify/arduino-led-strip/blob/master/arduino-led-strip.ino
+void fire(int num_leds, CRGB leds[]) {
+  int r = 156;
+  int g = 52;
+  int b = 0;
+  memset(leds, 0, num_leds * 3);
+  for (int x = 0; x < num_leds; x++) {
+    int flicker = random(0, 150);
+    int r1 = r - flicker;
+    int g1 = g - flicker;
+    int b1 = b - flicker;
+    if (g1 < 0) g1 = 0;
+    if (r1 < 0) r1 = 0;
+    if (b1 < 0) b1 = 0;
+    leds[x].r = r1;
+    leds[x].g = g1;
+    leds[x].b = b1;
+  }
+  FastLED.show();
+  delay(random(100, 250));
+}
 
+void bars(int num_leds, CRGB leds[]) {
+  for (int i = 0; i < num_leds; i++) {
+    leds[i] = CHSV(random(0, 255), random(200, 255), random(0, 255));
+    FastLED.show();
+    FastLED.delay(300);
+  }
+}
+
+void applause(int num_leds, CRGB leds[]) {                                                 // This is the heart of this program. Sure is short. . . and fast.
+  static uint16_t lastPixel = 0;
+  fadeToBlackBy( leds, num_leds, 32);
+  leds[lastPixel] = CHSV(random8(HUE_BLUE,HUE_PURPLE),255,255);
+  lastPixel = random16(num_leds);
+  leds[lastPixel] = CRGB::White;
+  FastLED.show();
+  FastLED.delay(30);
+}
+
+// copied from https://gist.github.com/kriegsman/841c8cd66ed40c6ecaae
+void moveEffect(int num_leds, CRGB leds[], int movingEffect) {
+  lastCRGB = CRGB::Black;
+  switch (movingEffect) {
     case 1:   // Quick
       setCerrylon(num_leds, leds, 40);
       break;
@@ -249,21 +308,29 @@ void moveEffect(int num_leds, CRGB leds[], int movingEffect){
       mover(num_leds, leds);
       break;
     case 7:   // FLASH
-      flash(num_leds, leds);
+      applause(num_leds, leds);
       break;
     case 8:   // JUMP3
-      snowSparkle(num_leds, leds, 30);
+      twinkle(num_leds, leds, 10, true);
       break;
     case 9:   // JUMP7
-      snowSparkle(num_leds, leds, 70);
+      fire(num_leds, leds);
       break;
     case 10:   // FADE3
-      fade(num_leds, leds, 3);
+      bars(num_leds, leds);
       break;
     case 11:   // FADE7
+      //applause(num_leds, leds);
+      break;
+
+    case 12:   // DIY1
+      setStaticRainbow(num_leds, leds, 100, 30);
+      break;
+    case 13:   // FADE3
+      setPinkGradient(num_leds, leds);
+      break;
+    case 14:   // FADE7
       fade(num_leds, leds, 7);
       break;
   }
-
-
 }

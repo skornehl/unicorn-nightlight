@@ -1,4 +1,5 @@
 void setLedColour(int num_leds, CRGB leds[], CRGB colour);
+void setLastLedColour(int num_leds, CRGB leds[]);
 void increaseBrightness();
 void decreaseBrightness();
 void setLedOff(int num_leds, CRGB leds[]);
